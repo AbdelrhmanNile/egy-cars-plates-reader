@@ -4,11 +4,22 @@ import cv2
 import numpy as np
 from Prediction import PlatesReader 
 from plate_detection import YoloInferenece
+from Database import plates_db_api
 """
 Demo program that displays a webcam using OpenCV
 """
 pr = PlatesReader("ocr_model.hdf5") 
 pd = YoloInferenece("car_plate_detector.pt", 512)
+db = plates_db_api()
+
+def popup(name,plate_num):
+    layout = [
+        [sg.Text(f"Name: {name}")],
+        [sg.Text(f"Plate number: {plate_num}")],
+        [sg.Push(), sg.Button('OK')]
+    ]
+    sg.Window('POPUP', layout, modal=True).read(close=True)
+
 
 def main():
 
@@ -52,9 +63,16 @@ def main():
                     img = cv2.imread("./plt.jpg")
                     plate = img[y:h,x:w]
                     plate_num = pr.read_plate(plate)
+                    plate_num_ar = pr.label_to_ar(plate_num)
                     if plate_num != last_plate :
                         last_plate = plate_num
-                        print(plate_num)
+                        db_response = db.query(plate_num)
+
+                        if db_response != None :
+                            popup(db_response["name"],plate_num_ar)
+                        else:
+                            popup("Not registered",plate_num_ar)
+
                         frame_i = 1
 
 

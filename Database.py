@@ -42,6 +42,7 @@ class plates_db_api:
               }
 
         response = requests.request("POST", self.url, headers=headers, data=payload)
-        return response.text
+        response = json.loads(response.text)
+        return response["document"]
 
 

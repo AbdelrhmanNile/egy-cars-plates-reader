@@ -91,7 +91,7 @@ class PlatesReader:
         #pred_texts = self.label_to_ar(pred_texts)
         if len(pred_texts) < 7:
             return None
-        return self.label_to_ar(pred_texts)
+        return pred_texts
     
     def decode_label(self, out):
         out_best = list(np.argmax(out[0, 2:], axis=1))  # get max index -> len = 32
