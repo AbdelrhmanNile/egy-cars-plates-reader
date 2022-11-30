@@ -8,23 +8,22 @@ import requests
 class db_pipeline:
     def __init__(self, link, from_cluster, collection_name):
         self.db = self.connect_db(link, from_cluster, collection_name)
-## connection to MongoDB Cloud Atlas
+        
     def connect_db(self, link, from_cluster, collection_name):
         cluster = MongoClient(link)
         db = cluster[from_cluster]
         return db[collection_name]
 
-## def to import data from csv file into mongodb 
     def push_csv(self, csv_file_path):
         with open(csv_file_path,encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 self.db.insert_one(row)
                 print(row)
-##-------------------------------------------------------------------------------------------
+
     def remove_all(self):
         self.db.delete_many({})
-##-------------------------------------------------------------------------------------------
+        
 class plates_db_api:
     def __init__(self):
         self.url = "https://data.mongodb-api.com/app/data-eqwcz/endpoint/data/v1/action/findOne"

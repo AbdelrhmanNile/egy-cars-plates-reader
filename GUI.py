@@ -1,13 +1,12 @@
-
 import PySimpleGUI as sg
 import cv2
 import numpy as np
 from Prediction import PlatesReader 
 from plate_detection import YoloInferenece
 from Database import plates_db_api
-"""
-Demo program that displays a webcam using OpenCV
-"""
+from time import sleep
+
+
 pr = PlatesReader("ocr_model.hdf5") 
 pd = YoloInferenece("car_plate_detector.pt", 512)
 db = plates_db_api()
@@ -16,9 +15,10 @@ def popup(name,plate_num):
     layout = [
         [sg.Text(f"Name: {name}")],
         [sg.Text(f"Plate number: {plate_num}")],
-        [sg.Push(), sg.Button('OK')]
+        #[sg.Push(), sg.Button('OK')]
     ]
-    sg.Window('POPUP', layout, modal=True).read(close=True)
+    popup_win = sg.Window('POPUP', layout, modal=True, auto_close=True, auto_close_duration=10)
+    popup_win.read()
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     sg.theme('Black')
 
     # define the window layout
-    layout = [[sg.Text('OpenCV Demo', size=(40, 1), justification='center', font='Helvetica 20')],
+    layout = [[sg.Text('Plates Reader', size=(40, 1), justification='left', font='Helvetica 20')],
               [sg.Image(filename='', key='image')],
               ]
 
@@ -63,7 +63,8 @@ def main():
                     img = cv2.imread("./plt.jpg")
                     plate = img[y:h,x:w]
                     plate_num = pr.read_plate(plate)
-                    plate_num_ar = pr.label_to_ar(plate_num)
+                    if plate_num != None:
+                        plate_num_ar = pr.label_to_ar(plate_num)
                     if plate_num != last_plate :
                         last_plate = plate_num
                         db_response = db.query(plate_num)
@@ -73,7 +74,7 @@ def main():
                         else:
                             popup("Not registered",plate_num_ar)
 
-                        frame_i = 1
+                frame_i = 1
 
 
 
