@@ -26,14 +26,14 @@ def main():
     sg.theme('Black')
 
     # define the window layout
-    layout = [[sg.Text('Plates Reader', size=(40, 1), justification='left', font='Helvetica 20')],
-              [sg.Image(filename='', key='image')],
-              ]
+    layout = [
+             [sg.Image(filename='', key='image')]
+             ]
 
     # create the window and show it without the plot
-    window = sg.Window('Demo Application - OpenCV Integration',
-                       layout, location=(800, 400))
-
+    window = sg.Window('Car Plates Reader',
+                       layout,icon='cctv.ico' , finalize=True)
+    window.Maximize()
     # ---===--- Event LOOP Read and display frames, operate the GUI --- #
     cap = cv2.VideoCapture(0)
     recording = True
